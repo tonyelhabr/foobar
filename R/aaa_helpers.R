@@ -1,5 +1,5 @@
 #' @noRd
-.fotmob_extract_meta <- function() {
+.foobar_extract_meta <- function() {
   page <- rvest::read_html(BASE_URL)
 
   page |>
@@ -9,8 +9,8 @@
 }
 
 #' @noRd
-.fotmob_get_build_id <- function() {
-  meta <- .fotmob_extract_meta()
+.foobar_get_build_id <- function() {
+  meta <- .foobar_extract_meta()
   meta |>
     stringr::str_extract('(?<=\\"buildId\\"[:]).*(?=\\,\\"isFallback\\")') |>
     safely_get_content() |>
@@ -18,7 +18,7 @@
 }
 
 #' @noRd
-.wrap_fotmob_match_f <- function(match_ids, f) {
+.wrap_foobar_match_f <- function(match_ids, f) {
   purrr::map_dfr(
     rlang::set_names(match_ids),
     f,

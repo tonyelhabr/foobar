@@ -7,7 +7,7 @@
 
 #' @noRd
 .load_page <- function(page_url) {
-  agent <- getOption("fotmob.agent", default = "R")
+  agent <- getOption("foobar.agent", default = "R")
   ua <- httr::user_agent(agent)
   session <- rvest::session(url = page_url, ua)
   xml2::read_html(session)

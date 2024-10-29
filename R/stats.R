@@ -1,5 +1,5 @@
 #' @noRd
-.fotmob_get_single_season_stats <- function(league_id, season_id, stat) {
+.foobar_get_single_season_stats <- function(league_id, season_id, stat) {
 
   if (stringr::str_detect(season_id, "-")) {
     season_id <- stringr::str_replace_all(season_id, "-", "\\/")
@@ -15,7 +15,7 @@
   if(!is.null(resp$error)) {
     stop(
       sprintf(
-        "Error in .fotmob_get_single_season_stats (with %s).\n%s", url, resp$error
+        "Error in .foobar_get_single_season_stats (with %s).\n%s", url, resp$error
       )
     )
   }
@@ -54,7 +54,7 @@
 }
 
 #' @noRd
-.fotmob_get_stat_and_season_options <- function(
+.foobar_get_stat_and_season_options <- function(
     country,
     league_name,
     league_id,
@@ -63,7 +63,7 @@
 ) {
 
   main_url <- "https://www.fotmob.com/api/"
-  url <- .fotmob_get_league_ids(
+  url <- .foobar_get_league_ids(
     cached = cached,
     country = rlang::maybe_missing(country, NULL),
     league_name = rlang::maybe_missing(league_name, NULL),
@@ -75,7 +75,7 @@
   if(!is.null(resp$error)) {
     stop(
       sprintf(
-        'Error in `.fotmob_get_stat_and_season_options` with `url = "%s"`.\n%s', url, resp$error
+        'Error in `.foobar_get_stat_and_season_options` with `url = "%s"`.\n%s', url, resp$error
       )
     )
   }
@@ -146,7 +146,7 @@
 }
 
 #' @noRd
-.fotmob_get_single_league_single_season_stats <- function(
+.foobar_get_single_league_single_season_stats <- function(
     country,
     league_name,
     league_id,
@@ -182,7 +182,7 @@
     )
   }
 
-  res <- .fotmob_get_single_season_stats(
+  res <- .foobar_get_single_season_stats(
     league_id = league_id,
     season_id = filt_season_options$season_id,
     stat = stat
@@ -203,15 +203,15 @@
 
 }
 
-#' Get season statistics from fotmob
+#' Get season statistics from foobar
 #'
-#' Returns team or player season-long statistics standings from fotmob.com.
+#' Returns team or player season-long statistics standings from foobar.com.
 #'
-#' @inheritParams fotmob_get_league_matches
+#' @inheritParams foobar_get_league_matches
 #' @param season_name Season names in the format `"2021/2022"`. Multiple allowed. If multiple leagues are specified, season stats are retrieved for each league.
 #' @param stat_league_name Same format as `league_name`. If not provided explicitly, then it takes on the same value as `league_name`. If provided explicitly, should be of the same length as `league_name` (or `league_id` if `league_name` is not provided).
 #'
-#' Note that not Fotmob currently only goes back as far as `"2016/2017"`. Some leagues may not have data for that far back.
+#' Note that not foobar currently only goes back as far as `"2016/2017"`. Some leagues may not have data for that far back.
 #'
 #' @param team_or_player return statistics for either \code{"team"} or \code{"player"}. Can only be one or the other.
 #' @param stat_name the type of statistic. Can be more than one.
@@ -232,7 +232,7 @@
 #' \item{Expected goals (xG)}
 #' \item{Expected goals (xG) per 90}
 #' \item{Expected goals on target (xGOT)}
-#' \item{FotMob rating}
+#' \item{foobar rating}
 #' \item{Fouls committed per 90}
 #' \item{Goals + Assists}
 #' \item{Goals conceded per 90}
@@ -265,7 +265,7 @@
 #' \item{Clean sheets}
 #' \item{Clearances per match}
 #' \item{Expected goals}
-#' \item{FotMob rating}
+#' \item{foobar rating}
 #' \item{Fouls per match}
 #' \item{Goals conceded per match}
 #' \item{Goals per match}
@@ -281,14 +281,14 @@
 #' \item{Yellow cards}
 #' }
 #'
-#' Fotmob has changed these stat names over time, so this list may be out-dated. If you try an invalid stat name, you should see an error message indicating which ones are available.
+#' foobar has changed these stat names over time, so this list may be out-dated. If you try an invalid stat name, you should see an error message indicating which ones are available.
 #'
 #' @return returns a dataframe of team or player stats
 #' @export
 #' @examples
 #' \donttest{
 #' try({
-#' epl_team_xg_2021 <- fotmob_get_season_stats(
+#' epl_team_xg_2021 <- foobar_get_season_stats(
 #'   country = "ENG",
 #'   league_name = "Premier League",
 #'   season = "2020/2021",
@@ -297,7 +297,7 @@
 #' )
 #' })
 #' }
-fotmob_get_season_stats <- function(
+foobar_get_season_stats <- function(
     country,
     league_name,
     league_id,
@@ -312,7 +312,7 @@ fotmob_get_season_stats <- function(
   rlang::arg_match(team_or_player)
   stopifnot("`season_name` cannot be NULL.`" = !is.null(season_name))
 
-  urls <- .fotmob_get_league_ids(
+  urls <- .foobar_get_league_ids(
     cached = cached,
     country = rlang::maybe_missing(country, NULL),
     league_name = rlang::maybe_missing(league_name, NULL),
@@ -340,7 +340,7 @@ fotmob_get_season_stats <- function(
     url <- urls |> dplyr::filter(.data[["id"]] == .env$league_id)
     country <-  url$ccode
     league_name <- url$name
-    options <- .fotmob_get_stat_and_season_options(
+    options <- .foobar_get_stat_and_season_options(
       cached = cached,
       country = country,
       league_name = league_name,
@@ -381,7 +381,7 @@ fotmob_get_season_stats <- function(
 
     purrr::map_dfr(
       season_name,
-      ~.fotmob_get_single_league_single_season_stats(
+      ~.foobar_get_single_league_single_season_stats(
         country = country,
         league_name = league_name,
         league_id = league_id,

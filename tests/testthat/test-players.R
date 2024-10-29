@@ -1,4 +1,4 @@
-test_that("fotmob_get_match_players() works", {
+test_that("foobar_get_match_players() works", {
   testthat::skip_on_cran()
 
   ## shouldn't test for exact equality since not all stats may appear for a game (if a no player in the game registers a value for a given stat)
@@ -6,7 +6,7 @@ test_that("fotmob_get_match_players() works", {
   expect_expected_match_player_cols <- function(df) {
     expect_true(all(expected_match_player_cols %in% colnames(df)))
   }
-  players <- fotmob_get_match_players(c(3609987, 3609979))
+  players <- foobar_get_match_players(c(3609987, 3609979))
   expect_gt(nrow(players), 0)
   expect_expected_match_player_cols(players)
 
@@ -14,12 +14,12 @@ test_that("fotmob_get_match_players() works", {
   # expect_true(is.character(players$stats_accurate_crosses))
   #
   # ## non-domestic league
-  # players <- fotmob_get_match_players(3846347)
+  # players <- foobar_get_match_players(3846347)
   # expect_gt(nrow(players), 0)
   # expect_expected_match_player_cols(players)
   #
   # ## Does it work with a game with some players missing stats?
   # ##   https://www.fotmob.com/match/2999754/matchfacts/vasco-da-gama-vs-atletico-mg
-  # players <- fotmob_get_match_players(2999754)
+  # players <- foobar_get_match_players(2999754)
   # expect_gt(nrow(players), 0)
 })

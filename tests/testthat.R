@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/reference/test_package.html#special-files
 
 library(testthat)
-library(fotmob)
+library(foobar)
 
-test_check("fotmob")
+test_check("foobar")

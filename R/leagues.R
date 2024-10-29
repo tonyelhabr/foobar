@@ -1,12 +1,12 @@
 ## TODO: Cache this.
 #' @importFrom utils read.csv
-.fotmob_load_csv <- function(suffix) {
+.foobar_load_csv <- function(suffix) {
   utils::read.csv(
     sprintf("https://raw.githubusercontent.com/JaseZiv/worldfootballR_data/master/raw-data/%s", suffix)
   )
 }
 
-.fotmob_get_league_urls <- function(
+.foobar_get_league_urls <- function(
     leagues,
     league_id = NULL,
     country = NULL,
@@ -87,16 +87,16 @@
 }
 
 
-#' Get fotmob league ids
+#' Get foobar league ids
 #'
-#' Returns a dataframe of the league ids available on fotmob
+#' Returns a dataframe of the league ids available on foobar
 #'
-#' @param cached Whether to load the dataframe from the \href{https://github.com/JaseZiv/worldfootballR_data/blob/master/raw-data/fotmob-leagues/all_leagues.csv}{data CSV}. This is faster and most likely what you want to do, unless you identify a league that's being tracked by fotmob that's not in this pre-saved CSV.
+#' @param cached Whether to load the dataframe from the \href{https://github.com/JaseZiv/worldfootballR_data/blob/master/raw-data/foobar-leagues/all_leagues.csv}{data CSV}. This is faster and most likely what you want to do, unless you identify a league that's being tracked by foobar that's not in this pre-saved CSV.
 #'
 #' @export
-fotmob_get_league_ids <- function(cached = TRUE) {
+foobar_get_league_ids <- function(cached = TRUE) {
   if (isTRUE(cached)) {
-    return(.fotmob_load_csv("fotmob-leagues/all_leagues.csv"))
+    return(.foobar_load_csv("foobar-leagues/all_leagues.csv"))
   }
 
   resp <- httr::POST("https://www.fotmob.com/api/allLeagues")
@@ -127,16 +127,16 @@ fotmob_get_league_ids <- function(cached = TRUE) {
 }
 
 
-.fotmob_get_league_ids <- function(cached = TRUE, ...) {
-  leagues <- fotmob_get_league_ids(cached = cached)
-  .fotmob_get_league_urls(
+.foobar_get_league_ids <- function(cached = TRUE, ...) {
+  leagues <- foobar_get_league_ids(cached = cached)
+  .foobar_get_league_urls(
     leagues = leagues,
     ...
   )
 }
 
 #' @noRd
-.fotmob_get_league_resp <- function(league_id, page_url, season = NULL, fallback = TRUE) {
+.foobar_get_league_resp <- function(league_id, page_url, season = NULL, fallback = TRUE) {
   url <- httr::parse_url("https://www.fotmob.com/api/leagues")
   url$query <- list(
     "id" = league_id,
@@ -153,15 +153,15 @@ fotmob_get_league_ids <- function(cached = TRUE) {
   )
 }
 
-#' Get fotmob match results by league
+#' Get foobar match results by league
 #'
 #' Returns match status given a league and season
 #'
 #' @param country Three character country code. Can be one or multiple. If provided, `league_name` must also be provided (of the same length)
 #' @param league_name League names. If provided, `country` must also be provided (of the same length).
-#' @param league_id Fotmob ID for the league. Only used if `country` and `league_name` are not specified.
+#' @param league_id foobar ID for the league. Only used if `country` and `league_name` are not specified.
 #' @param season Season, e.g. `"2021/2022"`. Can be one or multiple. If left as `NULL` (default), data for the latest season available will be pulled.
-#' @inheritParams fotmob_get_league_ids
+#' @inheritParams foobar_get_league_ids
 #'
 #' @return returns a dataframe of league matches
 #'
@@ -174,25 +174,25 @@ fotmob_get_league_ids <- function(cached = TRUE) {
 #' library(tidyr)
 #'
 #' # one league
-#' fotmob_get_league_matches(
+#' foobar_get_league_matches(
 #'   country = "ENG",
 #'   league_name = "Premier League"
 #' )
 #'
 #' # one league, by id
-#' fotmob_get_league_matches(
+#' foobar_get_league_matches(
 #'   league_id = 47
 #' )
 #'
 #' # can specify past seasons
-#' fotmob_get_league_matches(
+#' foobar_get_league_matches(
 #'   country = "GER",
 #'   league_name = "1. Bundesliga",
 #'   season = "2020/2021"
 #' )
 #'
 #' # multiple leagues (could also use ids)
-#' league_matches <- fotmob_get_league_matches(
+#' league_matches <- foobar_get_league_matches(
 #'   country =     c("ENG",            "ESP"   ),
 #'   league_name = c("Premier League", "LaLiga")
 #' )
@@ -203,9 +203,9 @@ fotmob_get_league_ids <- function(cached = TRUE) {
 #'   tidyr::unnest_wider(c(home, away), names_sep = "_")
 #' })
 #' }
-fotmob_get_league_matches <- function(country, league_name, league_id, season = NULL, cached = TRUE) {
+foobar_get_league_matches <- function(country, league_name, league_id, season = NULL, cached = TRUE) {
 
-  urls <- .fotmob_get_league_ids(
+  urls <- .foobar_get_league_ids(
     cached = cached,
     country = rlang::maybe_missing(country, NULL),
     league_name = rlang::maybe_missing(league_name, NULL),
@@ -225,18 +225,18 @@ fotmob_get_league_matches <- function(country, league_name, league_id, season = 
       urls$page_url,
       urls$season
     ),
-    .fotmob_get_league_matches
+    .foobar_get_league_matches
   )
 }
 
 #' @noRd
-.fotmob_message_for_season <- function(resp, season = NULL) {
+.foobar_message_for_season <- function(resp, season = NULL) {
 
   if (is.null(season)) {
     rlang::inform(
       glue::glue('Defaulting `season` to latest ("{resp$allAvailableSeasons[1]}").'),
       .frequency = "once",
-      .frequency_id = ".fotmob_get_league_(matches|tables)"
+      .frequency_id = ".foobar_get_league_(matches|tables)"
     )
   } else {
     if (isFALSE(season %in% resp$allAvailableSeasons)) {
@@ -251,26 +251,26 @@ fotmob_get_league_matches <- function(country, league_name, league_id, season = 
 }
 
 #' @noRd
-.fotmob_get_league_matches <- function(league_id, page_url, season = NULL) {
+.foobar_get_league_matches <- function(league_id, page_url, season = NULL) {
   # And now coerce NA back to NULL
   season <- switch(!is.na(season), season, NULL)
-  resp <- .fotmob_get_league_resp(
+  resp <- .foobar_get_league_resp(
     league_id = league_id,
     page_url = page_url,
     season = season
   )
-  .fotmob_message_for_season(resp, season)
+  .foobar_message_for_season(resp, season)
   matches <- resp$matches$allMatches
   matches |>
     janitor::clean_names() |>
     tibble::as_tibble()
 }
 
-#' Get standings from fotmob
+#' Get standings from foobar
 #'
-#' Returns league standings from fotmob.com. 4 types are returned: all, home, away, form
+#' Returns league standings from foobar.com. 4 types are returned: all, home, away, form
 #'
-#' @inheritParams fotmob_get_league_matches
+#' @inheritParams foobar_get_league_matches
 #'
 #' @return returns a dataframe of league standings
 #'
@@ -283,25 +283,25 @@ fotmob_get_league_matches <- function(country, league_name, league_id, season = 
 #' library(tidyr)
 #'
 #' # one league
-#' fotmob_get_league_tables(
+#' foobar_get_league_tables(
 #'   country = "ENG",
 #'   league_name = "Premier League"
 #' )
 #'
 #' # one league, by id
-#' fotmob_get_league_tables(
+#' foobar_get_league_tables(
 #'   league_id = 47
 #' )
 #'
 #' # one league, past season
-#' fotmob_get_league_tables(
+#' foobar_get_league_tables(
 #'   country = "GER",
 #'   league_name = "1. Bundesliga",
 #'   season = "2020/2021"
 #' )
 #'
 #' # multiple leagues (could also use ids)
-#' league_tables <- fotmob_get_league_tables(
+#' league_tables <- foobar_get_league_tables(
 #'   country =     c("ENG",            "ESP"   ),
 #'   league_name = c("Premier League", "LaLiga")
 #' )
@@ -311,9 +311,9 @@ fotmob_get_league_matches <- function(country, league_name, league_id, season = 
 #'   dplyr::filter(table_type == "away")
 #' })
 #' }
-fotmob_get_league_tables <- function(country, league_name, league_id, season = NULL, cached = TRUE) {
+foobar_get_league_tables <- function(country, league_name, league_id, season = NULL, cached = TRUE) {
 
-  urls <- .fotmob_get_league_ids(
+  urls <- .foobar_get_league_ids(
     cached = cached,
     country = rlang::maybe_missing(country, NULL),
     league_name = rlang::maybe_missing(league_name, NULL),
@@ -332,19 +332,19 @@ fotmob_get_league_tables <- function(country, league_name, league_id, season = N
       urls$page_url,
       urls$season
     ),
-    .fotmob_get_league_tables
+    .foobar_get_league_tables
   )
 }
 #' @noRd
-.fotmob_get_league_tables <- function(league_id, page_url, season = NULL) {
+.foobar_get_league_tables <- function(league_id, page_url, season = NULL) {
 
   season <- switch(!is.na(season), season, NULL)
-  resp <- .fotmob_get_league_resp(
+  resp <- .foobar_get_league_resp(
     league_id = league_id,
     page_url = page_url,
     season = season
   )
-  .fotmob_message_for_season(resp, season)
+  .foobar_message_for_season(resp, season)
 
   table_init <- resp$table$data
 

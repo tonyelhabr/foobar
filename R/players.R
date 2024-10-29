@@ -130,9 +130,9 @@
   rows
 }
 
-#' Get fotmob match player details by match id
+#' Get foobar match player details by match id
 #'
-#' Returns match details from fotmob.com
+#' Returns match details from foobar.com
 #'
 #' @param match_ids a vector of strings or numbers representing matches
 #'
@@ -144,7 +144,7 @@
 #' library(dplyr)
 #' library(tidyr)
 #' ## single match
-#' players <- fotmob_get_match_players(3610132)
+#' players <- foobar_get_match_players(3610132)
 #' salah_id <- "292462"
 #' players |>
 #'   dplyr::filter(id == salah_id) |>
@@ -152,17 +152,17 @@
 #'   tidyr::unnest(stats)
 #'
 #' ## multiple matches
-#' fotmob_get_match_players(c(3609987, 3609979))
+#' foobar_get_match_players(c(3609987, 3609979))
 #' })
 #' }
 #' @export
-fotmob_get_match_players <- function(match_ids) {
-  .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_players)
+foobar_get_match_players <- function(match_ids) {
+  .wrap_foobar_match_f(match_ids, .foobar_get_single_match_players)
 }
 
-.fotmob_get_single_match_players <- function(match_id) {
+.foobar_get_single_match_players <- function(match_id) {
   # CRAN feedback was to remove this from the existing functions so I have for now
-  # print(glue::glue("Scraping match data from fotmob for match {match_id}."))
+  # print(glue::glue("Scraping match data from foobar for match {match_id}."))
   main_url <- "https://www.fotmob.com/api/"
   url <- paste0(main_url, "matchDetails?matchId=", match_id)
 

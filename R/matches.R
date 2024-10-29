@@ -1,10 +1,10 @@
 #' @noRd
-.extract_fotmob_match_general <- function(url) {
+.extract_foobar_match_general <- function(url) {
   resp <- safely_get_content(url)$result
   general <- resp$general
   scalars <- data.frame(
     stringsAsFactors = FALSE,
-    match_id = general$matchId, ## don't technically need this since `.fotmob_get_single_match_details` is wrapped with `.wrap_fotmob_match_id_f`
+    match_id = general$matchId, ## don't technically need this since `.foobar_get_single_match_details` is wrapped with `.wrap_foobar_match_id_f`
     match_round = ifelse(is.null(general$matchRound), "", general$matchRound),
     league_id = general$leagueId,
     league_name = general$leagueName,
@@ -27,9 +27,9 @@
   )
 }
 
-#' Get fotmob match results by date
+#' Get foobar match results by date
 #'
-#' Returns match results for all matches played on the selected date from fotmob.com
+#' Returns match results for all matches played on the selected date from foobar.com
 #'
 #' @param dates a vector of string-formatted dates in "Ymd" format, e.g. "20210926". An attempt is
 #' made to coerce the input to the necessary format if a date is passed in.
@@ -46,18 +46,18 @@
 #' library(dplyr)
 #' library(tidyr)
 #'
-#' results <- fotmob_get_matches_by_date(date = c("20210925", "20210926"))
+#' results <- foobar_get_matches_by_date(date = c("20210925", "20210926"))
 #' results |>
 #'   dplyr::select(primary_id, ccode, league_name = name, match_id)
 #' })
 #' }
 #'
-fotmob_get_matches_by_date <- function(dates) {
-  purrr::map_dfr(dates, .fotmob_get_matches_by_single_date)
+foobar_get_matches_by_date <- function(dates) {
+  purrr::map_dfr(dates, .foobar_get_matches_by_single_date)
 }
 
 #' @noRd
-.fotmob_get_matches_by_single_date <- function(date) {
+.foobar_get_matches_by_single_date <- function(date) {
   main_url <- paste0(BASE_URL, "api/")
 
   f <- function(date) {
@@ -98,9 +98,9 @@ fotmob_get_matches_by_date <- function(dates) {
   fp(date)
 }
 
-#' Get fotmob match details by match id
+#' Get foobar match details by match id
 #'
-#' Returns match details from fotmob.com
+#' Returns match details from foobar.com
 #'
 #' @param match_ids a vector of strings or numbers representing matches
 #'
@@ -111,30 +111,30 @@ fotmob_get_matches_by_date <- function(dates) {
 #' try({
 #' library(dplyr)
 #' library(tidyr)
-#' results <- fotmob_get_matches_by_date(date = "20210926")
+#' results <- foobar_get_matches_by_date(date = "20210926")
 #' match_ids <- results |>
 #'   dplyr::select(primary_id, ccode, league_name = name, match_id) |>
 #'   dplyr::filter(league_name == "Premier League", ccode == "ENG") |>
 #'   dplyr::pull(match_id)
 #' match_ids # 3609987 3609979
-#' details <- fotmob_get_match_details(match_ids)
+#' details <- foobar_get_match_details(match_ids)
 #' })
 #' }
 #' @export
-fotmob_get_match_details <- function(match_ids) {
-  .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_details)
+foobar_get_match_details <- function(match_ids) {
+  .wrap_foobar_match_f(match_ids, .foobar_get_single_match_details)
 }
 
 #' @noRd
-.fotmob_get_single_match_details <- function(match_id) {
+.foobar_get_single_match_details <- function(match_id) {
   # CRAN feedback was to remove this from the existing functions so I have for now
-  # print(glue::glue("Scraping match data from fotmob for match {match_id}."))
+  # print(glue::glue("Scraping match data from foobar for match {match_id}."))
   main_url <- "https://www.fotmob.com/api/"
   url <- paste0(main_url, "matchDetails?matchId=", match_id)
 
   f <- function(url) {
 
-    general <- .extract_fotmob_match_general(url)
+    general <- .extract_foobar_match_general(url)
     df <- dplyr::bind_cols(
       general$scalars,
       general$teams
@@ -164,9 +164,9 @@ fotmob_get_match_details <- function(match_ids) {
   fp(url)
 }
 
-#' Get fotmob match top team stats by match id
+#' Get foobar match top team stats by match id
 #'
-#' Returns match top team stats from fotmob.com
+#' Returns match top team stats from foobar.com
 #'
 #' @param match_ids a vector of strings or numbers representing matches
 #'
@@ -177,28 +177,28 @@ fotmob_get_match_details <- function(match_ids) {
 #' try({
 #' library(dplyr)
 #' library(tidyr)
-#' results <- fotmob_get_matches_by_date(date = "20210926")
+#' results <- foobar_get_matches_by_date(date = "20210926")
 #' match_ids <- results |>
 #'   dplyr::select(primary_id, ccode, league_name = name, match_id) |>
 #'   dplyr::filter(league_name == "Premier League", ccode == "ENG") |>
 #'   dplyr::pull(match_id)
 #' match_ids # 3609987 3609979
-#' details <- fotmob_get_match_team_stats(match_ids)
+#' details <- foobar_get_match_team_stats(match_ids)
 #' })
 #' }
 #' @export
-fotmob_get_match_team_stats <- function(match_ids) {
-  .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_team_stats)
+foobar_get_match_team_stats <- function(match_ids) {
+  .wrap_foobar_match_f(match_ids, .foobar_get_single_match_team_stats)
 }
 
-.fotmob_get_single_match_team_stats <- function(match_id) {
+.foobar_get_single_match_team_stats <- function(match_id) {
 
   main_url <- "https://www.fotmob.com/api/"
   url <- paste0(main_url, "matchDetails?matchId=", match_id)
 
   f <- function(url) {
 
-    general <- .extract_fotmob_match_general(url)
+    general <- .extract_foobar_match_general(url)
     df <- dplyr::bind_cols(
       general$scalars,
       general$teams
@@ -234,9 +234,9 @@ fotmob_get_match_team_stats <- function(match_ids) {
   fp(url)
 }
 
-#' Get fotmob match info by match id
+#' Get foobar match info by match id
 #'
-#' Returns match info from fotmob.com
+#' Returns match info from foobar.com
 #'
 #' @param match_ids a vector of strings or numbers representing matches
 #'
@@ -247,18 +247,18 @@ fotmob_get_match_team_stats <- function(match_ids) {
 #' try({
 #' library(dplyr)
 #' library(tidyr)
-#' results <- fotmob_get_matches_by_date(date = "20210926")
+#' results <- foobar_get_matches_by_date(date = "20210926")
 #' match_ids <- results |>
 #'   dplyr::select(primary_id, ccode, league_name = name, match_id) |>
 #'   dplyr::filter(league_name == "Premier League", ccode == "ENG") |>
 #'   dplyr::pull(match_id)
 #' match_ids # 3609987 3609979
-#' details <- fotmob_get_match_info(match_ids)
+#' details <- foobar_get_match_info(match_ids)
 #' })
 #' }
 #' @export
-fotmob_get_match_info <- function(match_ids) {
-  .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_info)
+foobar_get_match_info <- function(match_ids) {
+  .wrap_foobar_match_f(match_ids, .foobar_get_single_match_info)
 }
 
 #' @importFrom purrr possibly
@@ -267,14 +267,14 @@ fotmob_get_match_info <- function(match_ids) {
 #' @importFrom rlang .data
 #' @importFrom tibble tibble enframe
 #' @importFrom tidyr pivot_wider unnest unnest_wider
-.fotmob_get_single_match_info <- function(match_id) {
+.foobar_get_single_match_info <- function(match_id) {
   main_url <- "https://www.fotmob.com/api/"
 
   f <- function(match_id) {
 
     url <- paste0(main_url, "matchDetails?matchId=", match_id)
 
-    general <- .extract_fotmob_match_general(url)
+    general <- .extract_foobar_match_general(url)
     df <- dplyr::bind_cols(
       general$scalars,
       general$teams
@@ -315,26 +315,26 @@ fotmob_get_match_info <- function(match_ids) {
 }
 
 
-#' Get fotmob match momentum
+#' Get foobar match momentum
 #'
-#' Returns match momentum from fotmob.com. Only available for 2022/23 season and beyond.
+#' Returns match momentum from foobar.com. Only available for 2022/23 season and beyond.
 #'
-#' @inheritParams fotmob_get_match_info
+#' @inheritParams foobar_get_match_info
 #'
 #' @return returns a dataframe of match momentum
 #' @examples
 #' \donttest{
 #' try({
 #' match_id <- 3901251
-#' fotmob_get_match_info(match_id)
+#' foobar_get_match_info(match_id)
 #' })
 #' }
 #' @export
-fotmob_get_match_momentum <- function(match_ids) {
-  .wrap_fotmob_match_f(match_ids, .fotmob_get_single_match_momentum)
+foobar_get_match_momentum <- function(match_ids) {
+  .wrap_foobar_match_f(match_ids, .foobar_get_single_match_momentum)
 }
 
-.fotmob_get_single_match_momentum <- function(match_id, type) {
+.foobar_get_single_match_momentum <- function(match_id, type) {
 
   main_url <- "https://www.fotmob.com/api/"
   url <- paste0(main_url, "matchDetails?matchId=", match_id)

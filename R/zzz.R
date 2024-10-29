@@ -1,6 +1,6 @@
 #' @importFrom utils sessionInfo
 .onLoad <- function(libname, pkgname) {
-  agent_option <- getOption("fotmob.agent")
+  agent_option <- getOption("foobar.agent")
   session_info <- utils::sessionInfo()
   r_version <- session_info$R.version
   agent <- sprintf(
@@ -11,5 +11,5 @@
     r_version$arch,
     r_version$arch
   )
-  options("fotmob.agent" = agent)
+  options("foobar.agent" = agent)
 }
