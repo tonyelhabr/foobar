@@ -1,4 +1,4 @@
-# fotmob
+# foobar
 
 <!-- badges: start -->
 
@@ -10,10 +10,10 @@
 
 ## Installation
 
-You can install the development version of `{fotmob}` with:
+You can install the development version of `{foobar}` with:
 
 ``` r
-remotes::install_github("tonyelhabr/fotmob")
+remotes::install_github("tonyelhabr/foobar")
 ```
 
-The functions in this package used to be in [`{worldfootballR}`](https://github.com/JaseZiv/worldfootballR). Sadly, they were removed with [this PR](https://github.com/JaseZiv/worldfootballR/pull/311) and now reside here for those wishing to use the lastest version of `{worldfootballR}` and maintain backwards compatibility with code that relies on the fotmob functions.
+The functions in this package used to be in [`{worldfootballR}`](https://github.com/JaseZiv/worldfootballR). Sadly, they were removed with [this PR](https://github.com/JaseZiv/worldfootballR/pull/311) and now reside here for those wishing to use the lastest version of `{worldfootballR}` and maintain backwards compatibility with code that relies on the foobar functions.
